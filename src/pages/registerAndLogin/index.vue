@@ -149,15 +149,19 @@ export default {
       justify-content: space-between;
       align-items: center;
       font-size:0;
-      input {
-        font-size: 16px;
-        background-color: #f2f2f2;
-        border-radius: 5px;
-        display: block;
-        height: 40px;
-        width: 200px;
-        padding-left:20px;
-        // margin-bottom:18px;
+      .input-box{
+        -webkit-user-select:text !important;
+        input {
+          -webkit-user-select:text !important;
+          font-size: 16px;
+          background-color: #f2f2f2;
+          border-radius: 5px;
+          display: block;
+          height: 40px;
+          width: 200px;
+          padding-left:20px;
+          // margin-bottom:18px;
+        }
       }
       .button {
         width: 200px;
