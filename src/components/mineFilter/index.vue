@@ -154,13 +154,12 @@
         text-overflow:ellipsis;
         white-space: nowrap;
         font-size:12px;
-        flex-grow:1;
+        flex:1;
       }
       .filter-owned{
-        font-size:12px;
-        min-width:106px;
         border-radius:5px;
         span{
+          font-size:12px;
           padding:1px;
           border-left:1px solid black;
           border-top:1px solid black;

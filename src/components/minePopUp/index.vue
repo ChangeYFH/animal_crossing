@@ -1,7 +1,7 @@
 <template>
-    <div appear name="popUp" class="popUp" v-show="display" @click="hide" ref="popUp">
+    <div appear name="popUp" class="popUp"  v-show="display" @click="hide" ref="popUp">
       <div class="content-container">    <!-- 由于不知道子元素的大小，父元素不能用flex，子元素不能用transform:translate3d(-50%,-50%,0)，所以添加一个中间元素，在该元素上使用flex布局 -->
-        <div class="content" :key="1" ref="content">
+        <div class="content" ref="content">
           <slot></slot>
         </div>
       </div>
@@ -52,5 +52,11 @@
         transition: all 0.3s;
       }
     }
+  }
+  .hidden{
+    opacity: 0 !important;
+  }
+  .shrink{
+    transform:scale(0.9) !important;
   }
 </style>
