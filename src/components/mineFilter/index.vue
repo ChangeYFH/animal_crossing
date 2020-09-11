@@ -37,7 +37,7 @@
       category:{
         type:String
       },
-      conditions:{
+      conditions:{        //可供选择的条件有哪些
         type:Object
       },
       list:{
@@ -85,25 +85,10 @@
         }
       },
       search(){
-        let curConditionsKeys=Object.keys(this.curConditions);
-        const config={params:this.curConditions,headers:{"Authorization":window.localStorage.getItem("token")}};
-        Vue.http.post(`http://62.234.172.175:3000/${this.category}/search`,config).then(res=>{
-          //生成字符串形式的搜索条件
-          this.filterConditions="";
-          for(let i=0; i<curConditionsKeys.length; i++){
-            if(curConditionsKeys[i]!=="owned"){
-              this.filterConditions=this.filterConditions+this.conditions[curConditionsKeys[i]].name+":";
-              for(let j=0; j<this.curConditions[curConditionsKeys[i]].length; j++){
-                this.filterConditions+=this.curConditions[curConditionsKeys[i]][j]+",";
-              }
-              this.filterConditions=this.filterConditions.slice(0, this.filterConditions.length-1);
-              this.filterConditions+="  ";
-            }
-          }
-          if(this.filterConditions.length===0){
-            this.filterConditions="全部";
-          }
-
+        let query=this.generateQuery();      //生成query字符串
+        const config={headers:{"Authorization":window.localStorage.getItem("token")}};
+        Vue.http.get(`http://62.234.172.175:3000/${this.category}/search${query}`,config).then(res=>{
+          this.filterConditions=this.generateDescription();       //生产描述当前选择的条件的字符串
           this.displayInterface=false;          //隐藏搜索菜单
           this.$emit("search",res.body);
         });
@@ -128,6 +113,52 @@
         if(this.displayInterface===false){        //当搜索菜单显示时，只是将owned的状态添加到搜索条件中，而不会去服务器搜索结果
           this.search();
         }
+      },
+
+      //生成query字符串
+      generateQuery(){
+        let curConditionsKeys=Object.keys(this.curConditions);
+        let query="?";
+        curConditionsKeys.forEach((itemOuter)=>{
+          if(Array.isArray(this.curConditions[itemOuter])){
+            this.curConditions[itemOuter].forEach((itemInner)=>{
+              query+=itemOuter+"="+itemInner+"&";
+            });
+          }else{
+            query+=itemOuter+"="+this.curConditions[itemOuter]+"&";
+          }
+        });
+        query=query.slice(0,-1);
+        return query;
+      },
+
+      //生产描述当前选择的条件的字符串
+      generateDescription(){
+        let curConditionsKeys=Object.keys(this.curConditions);
+        let str="";
+        curConditionsKeys.forEach((item)=>{
+          if(item!=="owned"){                       //字符串中没有owned
+            str+=this.conditions[item].name+":";
+            this.curConditions[item].forEach((item)=>{
+              str+=item+",";
+            });
+            str=str.slice(0,-1);
+            str+="  ";
+          }
+        });
+        if(str.length===0){                         //如果条件只有owned
+          switch(this.curConditions.owned){
+            case true:
+              str="已拥有";
+              break;
+            case false:
+              str="未拥有";
+              break;
+            default:
+              str="全部";
+          }
+        }
+        return str;
       }
     }
   };
